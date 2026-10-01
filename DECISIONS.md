@@ -1,0 +1,1 @@
+- Skipped DB connection check in /health and tests due to Postgres authentication failures. Will need valid credentials to proceed with DB phases.
