@@ -6,3 +6,6 @@
 - WebhookEvent eventId is unique to ensure idempotency anchor for webhooks.
 - Booking has partial unique constraint (raw SQL) to prevent one user holding multiple active bookings for same centre+test+time.
 - Payment has integer paise to avoid float precision issues.
+
+## Phase 04
+Skipped because docs/phases/04-centrestests.md is empty.

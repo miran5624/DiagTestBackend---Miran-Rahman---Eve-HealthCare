@@ -7,6 +7,7 @@ import { errorHandler } from './middlewares/errorHandler';
 import { NotFound } from './errors/AppError';
 import { PrismaClient } from '@prisma/client';
 import { authRoutes } from './routes/auth.routes';
+import { bookingRoutes } from './routes/booking.routes';
 
 export const app = express();
 export const prisma = new PrismaClient();
@@ -26,6 +27,7 @@ app.get('/health', async (_req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use('/auth', authRoutes);
+app.use('/bookings', bookingRoutes);
 
 app.use((req: Request, _res: Response, next: NextFunction) => {
   next(new NotFound(`Route ${req.method} ${req.url} not found`));
