@@ -9,3 +9,6 @@
 
 ## Phase 04
 Skipped because docs/phases/04-centrestests.md is empty.
+
+## Phase 06
+Skipped because docs/phases/06-simpayment.md is empty.

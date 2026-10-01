@@ -8,13 +8,19 @@ import { NotFound } from './errors/AppError';
 import { PrismaClient } from '@prisma/client';
 import { authRoutes } from './routes/auth.routes';
 import { bookingRoutes } from './routes/booking.routes';
+import { paymentRoutes } from './routes/payment.routes';
 
 export const app = express();
 export const prisma = new PrismaClient();
 
 app.use(helmet());
 app.use(cors());
-app.use(express.json());
+app.use(express.json({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  verify: (req: any, _res, buf) => {
+    req.rawBody = buf;
+  }
+}));
 app.use(pinoHttp({ logger }));
 
 app.get('/health', async (_req: Request, res: Response, next: NextFunction) => {
@@ -28,6 +34,7 @@ app.get('/health', async (_req: Request, res: Response, next: NextFunction) => {
 
 app.use('/auth', authRoutes);
 app.use('/bookings', bookingRoutes);
+app.use('/payments', paymentRoutes);
 
 app.use((req: Request, _res: Response, next: NextFunction) => {
   next(new NotFound(`Route ${req.method} ${req.url} not found`));
