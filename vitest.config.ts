@@ -6,11 +6,7 @@ export default defineConfig({
     environment: 'node',
     setupFiles: ['./tests/setup.ts'],
     exclude: ['node_modules', 'dist'],
-    poolOptions: {
-      threads: {
-        singleThread: true,
-      },
-    },
+    pool: 'forks',
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

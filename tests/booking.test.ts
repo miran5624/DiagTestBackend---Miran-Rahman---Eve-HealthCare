@@ -65,4 +65,42 @@ describe('Booking routes', () => {
       expect(BookingStateMachine.canTransition('CANCELLED', 'CONFIRMED')).toBe(false);
     });
   });
+
+  describe('GET /bookings/:id', () => {
+    it('should return 404 for not found', async () => {
+      vi.spyOn(prisma.booking, 'findUnique').mockResolvedValue(null);
+      const res = await request(app).get(`/bookings/${validUuid}`).set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(404);
+    });
+
+    it('should return 404 if booking belongs to other user', async () => {
+      vi.spyOn(prisma.booking, 'findUnique').mockResolvedValue({ id: validUuid, userId: 'other-user' } as any);
+      const res = await request(app).get(`/bookings/${validUuid}`).set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(404);
+    });
+
+    it('should return booking', async () => {
+      vi.spyOn(prisma.booking, 'findUnique').mockResolvedValue({ id: validUuid, userId: 'user-123' } as any);
+      const res = await request(app).get(`/bookings/${validUuid}`).set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(200);
+      expect(res.body.id).toBe(validUuid);
+    });
+  });
+
+  describe('POST /bookings/:id/cancel', () => {
+    it('should cancel pending booking', async () => {
+      vi.spyOn(prisma.booking, 'findUnique').mockResolvedValue({ id: validUuid, userId: 'user-123', status: 'PENDING' } as any);
+      vi.spyOn(prisma.booking, 'update').mockResolvedValue({ id: validUuid, status: 'CANCELLED' } as any);
+      const res = await request(app).post(`/bookings/${validUuid}/cancel`).set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe('CANCELLED');
+    });
+
+    it('should return 200 when cancelling already cancelled booking', async () => {
+      vi.spyOn(prisma.booking, 'findUnique').mockResolvedValue({ id: validUuid, userId: 'user-123', status: 'CANCELLED' } as any);
+      const res = await request(app).post(`/bookings/${validUuid}/cancel`).set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe('CANCELLED');
+    });
+  });
 });
