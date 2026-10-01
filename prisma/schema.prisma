@@ -7,6 +7,103 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Dummy {
-  id Int @id @default(autoincrement())
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model User {
+  id           String    @id @default(uuid()) @db.Uuid
+  email        String    @unique
+  passwordHash String
+  name         String?
+  createdAt    DateTime  @default(now())
+  bookings     Booking[]
+  payments     Payment[]
+}
+
+model DiagnosticCentre {
+  id          String       @id @default(uuid()) @db.Uuid
+  name        String
+  city        String
+  address     String
+  createdAt   DateTime     @default(now())
+  centreTests CentreTest[]
+
+  @@index([city])
+}
+
+model DiagnosticTest {
+  id          String       @id @default(uuid()) @db.Uuid
+  name        String       @unique
+  description String?
+  createdAt   DateTime     @default(now())
+  centreTests CentreTest[]
+}
+
+model CentreTest {
+  id         String           @id @default(uuid()) @db.Uuid
+  centreId   String           @db.Uuid
+  testId     String           @db.Uuid
+  pricePaise Int
+  isActive   Boolean          @default(true)
+  centre     DiagnosticCentre @relation(fields: [centreId], references: [id])
+  test       DiagnosticTest   @relation(fields: [testId], references: [id])
+  bookings   Booking[]
+
+  @@unique([centreId, testId])
+}
+
+model Booking {
+  id            String        @id @default(uuid()) @db.Uuid
+  userId        String        @db.Uuid
+  centreTestId  String        @db.Uuid
+  appointmentAt DateTime
+  amountPaise   Int
+  status        BookingStatus
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  user          User          @relation(fields: [userId], references: [id])
+  centreTest    CentreTest    @relation(fields: [centreTestId], references: [id])
+  payments      Payment[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Payment {
+  id                String        @id @default(uuid()) @db.Uuid
+  bookingId         String        @db.Uuid
+  userId            String        @db.Uuid
+  amountPaise       Int
+  status            PaymentStatus
+  providerReference String?       @unique
+  idempotencyKey    String?
+  failureReason     String?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  booking           Booking       @relation(fields: [bookingId], references: [id])
+  user              User          @relation(fields: [userId], references: [id])
+
+  @@unique([userId, idempotencyKey])
+}
+
+model WebhookEvent {
+  id                String    @id @default(uuid()) @db.Uuid
+  eventId           String    @unique
+  providerReference String
+  type              String
+  status            String
+  payload           Json
+  processedAt       DateTime?
+  outcome           String?
+  createdAt         DateTime  @default(now())
 }
