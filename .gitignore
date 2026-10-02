@@ -2,8 +2,3 @@ node_modules
 dist
 coverage
 .env
-PROGRESS.md
-BLOCKERS.md
-INTERVIEW_PREP.md
-docs/phases
-.agent
