@@ -28,6 +28,7 @@ jobs:
     env:
       DATABASE_URL: postgresql://postgres:password@localhost:5432/evehealthcare_test
       JWT_SECRET: test_secret
+      JWT_EXPIRES_IN: 1h
       WEBHOOK_SECRET: webhook_secret
       PORT: 3000
 
