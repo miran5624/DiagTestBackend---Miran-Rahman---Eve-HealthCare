@@ -12,6 +12,7 @@ import { authRoutes } from './routes/auth.routes';
 import { bookingRoutes } from './routes/booking.routes';
 import { paymentRoutes } from './routes/payment.routes';
 import { centreRoutes } from './routes/centre.routes';
+import { testRoutes } from './routes/test.routes';
 import { docsRouter } from './config/swagger';
 import { env } from './config/env';
 
@@ -62,6 +63,7 @@ app.get('/health', async (_req: Request, res: Response, next: NextFunction) => {
 app.use('/auth', authRoutes);
 app.use('/bookings', bookingRoutes);
 app.use('/centres', centreRoutes);
+app.use('/tests', testRoutes);
 app.use('/payments', paymentRoutes);
 app.use('/docs', docsRouter);
 

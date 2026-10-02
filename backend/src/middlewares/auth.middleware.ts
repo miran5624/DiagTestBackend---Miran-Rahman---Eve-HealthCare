@@ -5,6 +5,7 @@ import { Unauthorized } from '../errors/AppError';
 
 export interface AuthUser {
   userId: string;
+  role: string;
 }
 
 declare global {
@@ -25,10 +26,15 @@ export const authenticate = (req: Request, _res: Response, next: NextFunction) =
   const token = authHeader.split(' ')[1];
 
   try {
-    const decoded = jwt.verify(token, env.JWT_SECRET) as { sub: string };
-    req.user = { userId: decoded.sub };
+    const decoded = jwt.verify(token, env.JWT_SECRET) as { sub: string, role?: string };
+    req.user = { userId: decoded.sub, role: decoded.role || 'USER' };
     next();
   } catch {
     next(new Unauthorized('Invalid or expired token'));
   }
+};
+
+export const requireAdmin = (req: Request, _res: Response, next: NextFunction) => {
+  if (req.user?.role !== 'ADMIN') return next(new Unauthorized('Admin access required'));
+  next();
 };

@@ -7,6 +7,7 @@ export default defineConfig({
     setupFiles: ['./tests/setup.ts'],
     exclude: ['node_modules', 'dist'],
     pool: 'forks',
+    fileParallelism: false,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

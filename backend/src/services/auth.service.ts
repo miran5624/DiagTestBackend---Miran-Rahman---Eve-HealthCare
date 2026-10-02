@@ -32,7 +32,7 @@ export class AuthService {
       name: data.name,
     });
 
-    const token = this.generateToken(user.id);
+    const token = this.generateToken(user.id, user.role);
     return {
       user: { id: user.id, email: user.email, name: user.name, createdAt: user.createdAt },
       token
@@ -50,7 +50,7 @@ export class AuthService {
       throw new Unauthorized('Invalid credentials');
     }
 
-    const token = this.generateToken(user.id);
+    const token = this.generateToken(user.id, user.role);
     return { token };
   }
 
@@ -62,8 +62,8 @@ export class AuthService {
     return { id: user.id, email: user.email, name: user.name, createdAt: user.createdAt };
   }
 
-  private generateToken(userId: string) {
+  private generateToken(userId: string, role: string) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return jwt.sign({ sub: userId }, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN as any });
+    return jwt.sign({ sub: userId, role }, env.JWT_SECRET, { expiresIn: env.JWT_EXPIRES_IN as any });
   }
 }

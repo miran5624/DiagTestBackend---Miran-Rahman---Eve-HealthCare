@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../errors/AppError';
+import { ZodError } from 'zod';
 
 export const errorHandler = (
   err: Error,
@@ -13,6 +14,17 @@ export const errorHandler = (
         code: err.constructor.name,
         message: err.message,
         details: err.details,
+      },
+    });
+    return;
+  }
+
+  if (err instanceof ZodError) {
+    res.status(400).json({
+      error: {
+        code: 'ValidationError',
+        message: 'Invalid input data',
+        details: err.issues,
       },
     });
     return;
