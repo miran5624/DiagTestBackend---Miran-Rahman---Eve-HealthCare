@@ -43,8 +43,27 @@ export default function BookTest() {
     try {
       const res = await fetch('/api/centres'); 
       if (res.ok) {
-        const data = await res.json();
-        setCentreTests(data);
+        const responseData = await res.json();
+        const centres = responseData.data || [];
+        const flatList: CentreTest[] = [];
+        
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        centres.forEach((centre: any) => {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          centre.centreTests?.forEach((ct: any) => {
+            flatList.push({
+              id: ct.id,
+              centreId: centre.id,
+              testId: ct.test.id,
+              pricePaise: ct.pricePaise,
+              isActive: ct.isActive,
+              centre: { id: centre.id, name: centre.name },
+              test: { id: ct.test.id, name: ct.test.name }
+            });
+          });
+        });
+        
+        setCentreTests(flatList);
       }
     } catch (e) {
       console.error(e);
