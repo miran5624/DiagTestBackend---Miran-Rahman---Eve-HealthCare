@@ -3,7 +3,7 @@ import { prisma } from '../app';
 
 export const centreRoutes = Router();
 
-centreRoutes.get('/', async (req, res, next) => {
+centreRoutes.get('/', async (_req, res, next) => {
   try {
     const centreTests = await prisma.centreTest.findMany({
       where: { isActive: true },

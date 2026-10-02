@@ -55,14 +55,25 @@ export default function Dashboard() {
 
   const simulatePayment = async (bookingId: string) => {
     try {
-      await fetch('/api/payments/webhook', {
+      const res = await fetch('/api/payments/simulate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookingId }) // Note: Actual implementation needs proper signed webhook, this is a simplified simulation button
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ bookingId })
       });
-      alert('This requires a valid signed webhook payload! Check backend scripts/smoke.ts to see the actual HMAC signature requirement.');
-    } catch(err) {
+      
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error?.message || 'Payment simulation failed');
+      }
+      
+      alert('Payment simulated successfully! Webhook delivered. Refreshing bookings...');
+      fetchBookings(); // refresh the UI to show CONFIRMED status
+    } catch(err: any) {
       console.error(err);
+      alert(err.message);
     }
   }
 

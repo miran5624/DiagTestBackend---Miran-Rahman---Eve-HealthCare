@@ -46,6 +46,7 @@ jobs:
 
     - name: Setup Prisma
       run: |
+        cd backend
         npx prisma generate
         npx prisma migrate reset --force
 

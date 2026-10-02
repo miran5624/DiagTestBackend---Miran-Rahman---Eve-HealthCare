@@ -29,7 +29,14 @@ export default function Login({ setAuth }: LoginProps) {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error?.message || 'Authentication failed');
+      if (!res.ok) {
+        let errMsg = data.error?.message || 'Authentication failed';
+        if (data.error?.details) {
+          const firstDetail = Object.values(data.error.details).find((v: any) => v._errors?.length);
+          if (firstDetail) errMsg = (firstDetail as any)._errors[0];
+        }
+        throw new Error(errMsg);
+      }
 
       localStorage.setItem('token', data.token);
       setAuth(true);
