@@ -15,7 +15,7 @@ jobs:
         image: postgres:15
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
+          POSTGRES_PASSWORD: postgres
           POSTGRES_DB: evehealthcare_test
         ports:
           - 5432:5432
@@ -26,7 +26,7 @@ jobs:
           --health-retries 5
 
     env:
-      DATABASE_URL: postgresql://postgres:password@localhost:5432/evehealthcare_test
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/evehealthcare_test
       JWT_SECRET: test_secret
       JWT_EXPIRES_IN: 1h
       WEBHOOK_SECRET: webhook_secret
